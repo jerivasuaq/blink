@@ -1,13 +1,14 @@
 #include "Logger.h"
 #include <stdarg.h>
 
-// ANSI color codes
-const char* Logger::COLOR_DEBUG = "\033[36m";      // Cyan
-const char* Logger::COLOR_INFO = "\033[32m";       // Green
-const char* Logger::COLOR_WARN = "\033[33m";       // Yellow
-const char* Logger::COLOR_ERROR = "\033[31m";      // Red
-const char* Logger::COLOR_CRITICAL = "\033[35m";   // Magenta
-const char* Logger::COLOR_RESET = "\033[0m";       // Reset
+// ANSI color codes with bright colors for better visibility
+const char* Logger::COLOR_DEBUG = "\033[96m";       // Bright Cyan
+const char* Logger::COLOR_INFO = "\033[92m";        // Bright Green
+const char* Logger::COLOR_WARN = "\033[93m";        // Bright Yellow
+const char* Logger::COLOR_ERROR = "\033[91m";       // Bright Red
+const char* Logger::COLOR_CRITICAL = "\033[95m";    // Bright Magenta
+const char* Logger::COLOR_TAG = "\033[94m";         // Bright Blue
+const char* Logger::COLOR_RESET = "\033[0m";        // Reset
 
 // Global logger instance
 Logger logger(Serial, LOG_INFO);
@@ -55,20 +56,37 @@ const char* Logger::getColorForLevel(LogLevel level) {
     }
 }
 
+const char* Logger::getEmojiForLevel(LogLevel level) {
+    switch (level) {
+        case LOG_DEBUG:
+            return "🔍";  // Magnifying glass
+        case LOG_INFO:
+            return "ℹ️";   // Info symbol
+        case LOG_WARN:
+            return "⚠️";   // Warning sign
+        case LOG_ERROR:
+            return "❌";   // Error X
+        case LOG_CRITICAL:
+            return "🔴";   // Red circle
+        default:
+            return "❓";   // Question mark
+    }
+}
+
 const char* Logger::getLabelForLevel(LogLevel level) {
     switch (level) {
         case LOG_DEBUG:
-            return "[DEBUG]";
+            return "DEBUG";
         case LOG_INFO:
-            return "[INFO]";
+            return "INFO";
         case LOG_WARN:
-            return "[WARN]";
+            return "WARN";
         case LOG_ERROR:
-            return "[ERROR]";
+            return "ERROR";
         case LOG_CRITICAL:
-            return "[CRITICAL]";
+            return "CRIT";
         default:
-            return "[UNKNOWN]";
+            return "????";
     }
 }
 
@@ -95,10 +113,15 @@ void Logger::log(LogLevel level, const char* tag, const char* message) {
     }
     
     serialPort->print(getColorForLevel(level));
-    printTimestamp();
-    serialPort->print(getLabelForLevel(level));
+    serialPort->print(getEmojiForLevel(level));
     serialPort->print(" ");
+    printTimestamp();
+    serialPort->print("[");
+    serialPort->print(getLabelForLevel(level));
+    serialPort->print("] ");
+    serialPort->print(COLOR_TAG);
     serialPort->print(tag);
+    serialPort->print(getColorForLevel(level));
     serialPort->print(": ");
     serialPort->print(message);
     serialPort->println(useColors ? COLOR_RESET : "");

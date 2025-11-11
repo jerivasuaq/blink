@@ -30,7 +30,8 @@ void setup(){
     logger.setColors(true);
     
     logger.info("Main", "Starting blink application with WiFi support");
-    
+    logger.info("SSID", ssid);
+
     pinMode(LED, OUTPUT);
     
     // Connect to WiFi

@@ -6,8 +6,8 @@ WiFiManager::WiFiManager(const char* ssid, const char* password, int maxAttempts
 }
 
 bool WiFiManager::connect() {
-    logger.info("WiFiManager", "Starting WiFi connection...");
-    logger.infof("WiFiManager", "Connecting to: %s", ssid);
+    logger.info("WiFiManager", "🚀 Starting WiFi connection...");
+    logger.infof("WiFiManager", "🔗 Connecting to SSID: %s", ssid);
     
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
@@ -15,25 +15,26 @@ bool WiFiManager::connect() {
     int attempts = 0;
     while (WiFi.status() != WL_CONNECTED && attempts < maxAttempts) {
         delay(delayMs);
+        logger.debugf("WiFiManager", "🔄 Attempt %d/%d...", attempts + 1, maxAttempts);
         attempts++;
     }
     
     if (WiFi.status() == WL_CONNECTED) {
-        logger.info("WiFiManager", "WiFi connected!");
-        logger.infof("WiFiManager", "IP address: %s", WiFi.localIP().toString().c_str());
-        logger.infof("WiFiManager", "SSID: %s", WiFi.SSID().c_str());
-        logger.infof("WiFiManager", "Signal strength: %d dBm", WiFi.RSSI());
+        logger.info("WiFiManager", "✅ WiFi connected!");
+        logger.infof("WiFiManager", "🌐 IP address: %s", WiFi.localIP().toString().c_str());
+        logger.infof("WiFiManager", "📶 SSID: %s", WiFi.SSID().c_str());
+        logger.infof("WiFiManager", "📡 Signal strength: %d dBm", WiFi.RSSI());
         return true;
     } else {
-        logger.error("WiFiManager", "Failed to connect to WiFi");
+        logger.error("WiFiManager", "❌ Failed to connect to WiFi");
         return false;
     }
 }
 
 void WiFiManager::disconnect() {
-    logger.info("WiFiManager", "Disconnecting from WiFi...");
+    logger.info("WiFiManager", "🔌 Disconnecting from WiFi...");
     WiFi.disconnect(true); // true = turn off WiFi radio
-    logger.info("WiFiManager", "WiFi disconnected");
+    logger.info("WiFiManager", "📴 WiFi disconnected");
 }
 
 bool WiFiManager::isConnected() {

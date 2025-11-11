@@ -25,10 +25,14 @@ private:
     static const char* COLOR_WARN;
     static const char* COLOR_ERROR;
     static const char* COLOR_CRITICAL;
+    static const char* COLOR_TAG;
     static const char* COLOR_RESET;
     
     // Get color for log level
     const char* getColorForLevel(LogLevel level);
+    
+    // Get emoji for log level
+    const char* getEmojiForLevel(LogLevel level);
     
     // Get label for log level
     const char* getLabelForLevel(LogLevel level);
