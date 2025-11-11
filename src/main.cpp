@@ -1,16 +1,63 @@
 #include <Arduino.h>
+#include "WiFiManager.h"
+#include "Logger.h"
 
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);  // Initialize the LED_BUILTIN pin as an output
+// WiFi credentials from .env file
+#ifndef WIFI_SSID
+#define WIFI_SSID "YOUR_SSID"
+#endif
+
+#ifndef WIFI_PASSWORD
+#define WIFI_PASSWORD "YOUR_PASSWORD"
+#endif
+
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWORD;
+
+// LED pin
+const int LED = 2;
+
+// WiFiManager instance
+WiFiManager wifiManager(ssid, password);
+
+void setup(){
+    Serial.begin(115200);
+    delay(1000); // Wait for Serial to initialize
+    
+    // Configure logger
+    logger.setLogLevel(LOG_DEBUG);
+    logger.setTimestamp(true);
+    logger.setColors(true);
+    
+    logger.info("Main", "Starting blink application with WiFi support");
+    
+    pinMode(LED, OUTPUT);
+    
+    // Connect to WiFi
+    if (wifiManager.connect()) {
+        logger.info("Main", "WiFi connection successful!");
+    } else {
+        logger.warn("Main", "WiFi connection failed, continuing with LED blink");
+    }
 }
 
-// the loop function runs over and over again forever
-void loop() {
-  digitalWrite(LED_BUILTIN, LOW);  // Turn the LED on (Note that LOW is the voltage level
-  // but actually the LED is on; this is because
-  // it is active low on the ESP-01)
-  delay(1000);                      // Wait for a second
-  digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-  delay(2000);                      // Wait for two seconds (to demonstrate the active low LED)
+void loop(){
+    // Blink LED
+    digitalWrite(LED, HIGH);
+    delay(500);
+    digitalWrite(LED, LOW);
+    delay(500);
+    
+    // Print WiFi status periodically
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint > 10000) { // Every 10 seconds
+        lastPrint = millis();
+        if (wifiManager.isConnected()) {
+            logger.debugf("Main", "WiFi Status: %s, Signal: %d dBm", 
+                         wifiManager.getStatusString().c_str(),
+                         wifiManager.getSignalStrength());
+        } else {
+            logger.warn("Main", "WiFi disconnected");
+        }
+    }
 }
-
