@@ -5,8 +5,6 @@
 #include "MQTTManager.h"
 #include "LEDBlinker.h"
 
-const char* ssid = WIFI_SSID;
-const char* password = WIFI_PASSWORD;
 WiFiManager wifiManager(ssid, password);
 MQTTManager mqttManager(MQTT_BROKER, MQTT_PORT);
 LEDBlinker led(LED_PIN, 500);
