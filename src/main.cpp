@@ -3,14 +3,14 @@
 #include "WiFiManager.h"
 #include "Logger.h"
 #include "MQTTManager.h"
+#include "LEDBlinker.h"
 
-// WiFiManager instance
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWORD;
 WiFiManager wifiManager(ssid, password);
-
-// MQTTManager instance
 MQTTManager mqttManager(MQTT_BROKER, MQTT_PORT);
+LEDBlinker led(LED_PIN, 500);
 
-// MQTT message callback
 void mqttCallback(char* topic, uint8_t* payload, unsigned int length) {
     logger.infof("MQTT", "📩 Message received on topic: %s", topic);
     String msg;
@@ -26,7 +26,7 @@ void setup() {
     logger.setColors(true);
     logger.info("Main", "Starting blink application with WiFi & MQTT support");
     logger.info("SSID", ssid);
-    pinMode(LED_PIN, OUTPUT);
+    led.begin();
     if (wifiManager.connect()) {
         logger.info("Main", "WiFi connection successful!");
     } else {
@@ -45,18 +45,11 @@ void setup() {
 }
 
 void loop() {
-    digitalWrite(LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(LED_PIN, LOW);
-    delay(500);
-    static unsigned long lastPrint = 0;
-    if (millis() - lastPrint > 10000) {
-        lastPrint = millis();
-        if (wifiManager.isConnected()) {
-            logger.debugf("Main", "WiFi Status: %s, Signal: %d dBm", wifiManager.getStatusString().c_str(), wifiManager.getSignalStrength());
-        } else {
-            logger.warn("Main", "WiFi disconnected");
-        }
+    led.update();
+    if (wifiManager.isConnected()) {
+        logger.debugf("Main", "WiFi Status: %s, Signal: %d dBm", wifiManager.getStatusString().c_str(), wifiManager.getSignalStrength());
+    } else {
+        logger.warn("Main", "WiFi disconnected");
     }
     mqttManager.loop();
 }
