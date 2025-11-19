@@ -35,8 +35,8 @@ void setup() {
         logger.info("MQTT", "✅ Connected to MQTT broker!");
         mqttManager.subscribe(MQTT_TOPIC);
         logger.infof("MQTT", "🔔 Subscribed to topic: %s", MQTT_TOPIC);
-        mqttManager.publish(MQTT_TOPIC, "Hello from ESP32!");
-        logger.info("MQTT", "📤 Published initial message");
+        // mqttManager.publish(MQTT_TOPIC, "Hello from ESP32!");
+        // logger.info("MQTT", "📤 Published initial message");
     } else {
         logger.error("MQTT", "❌ MQTT connection failed");
     }
@@ -45,9 +45,18 @@ void setup() {
 void loop() {
     led.update();
     if (wifiManager.isConnected()) {
-        logger.debugf("Main", "WiFi Status: %s, Signal: %d dBm", wifiManager.getStatusString().c_str(), wifiManager.getSignalStrength());
+        // logger.debugf("Main", "WiFi Status: %s, Signal: %d dBm", wifiManager.getStatusString().c_str(), wifiManager.getSignalStrength());
     } else {
         logger.warn("Main", "WiFi disconnected");
     }
+    // Every 1 second, publish a heartbeat message
+    // static unsigned long lastPublish = 0;
+    // if (millis() - lastPublish > 1000) {
+    //     lastPublish = millis();
+    //     if (mqttManager.isConnected()) {
+    //         mqttManager.publish(MQTT_TOPIC, "Heartbeat from ESP32");
+    //         logger.info("MQTT", "📤 Published heartbeat message");
+    //     }
+    // }
     mqttManager.loop();
 }

@@ -11,10 +11,21 @@
 #endif
 
 // MQTT broker settings
+#ifndef MQTT_BROKER
 #define MQTT_BROKER "test.mosquitto.org"
+#endif
+
+#ifndef MQTT_PORT
 #define MQTT_PORT 1883
+#endif
+
+#ifndef MQTT_TOPIC
 #define MQTT_TOPIC "blink/test"
+#endif
+
+#ifndef MQTT_CLIENT_ID
 #define MQTT_CLIENT_ID "blinkClient"
+#endif
 
 // LED pin
 #define LED_PIN 2
